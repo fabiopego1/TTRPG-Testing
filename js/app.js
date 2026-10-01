@@ -2,7 +2,7 @@
 (function (RT) {
   const $ = id => document.getElementById(id), svg = $('map'), panel = $('panel'), D = RT.DEMACIA, SIZES = RT.CREATURES;
   const STORE = 'runeterra-atlas-demacia-v4', FONT = 'Marcellus, Georgia, serif';
-  const S = { level: 'city', maps: { city: 'silvermere', site: 'crownguard' }, theme: 'day', opts: { labels: 1, numbers: 1, deco: 1 }, sel: null, view: null, tool: null, tokType: 'hero', tokSize: 2.5, px: { city: 15, site: 70 }, items: [], notes: {}, measure: null };
+  const S = { level: 'city', maps: { city: 'silvermere', site: 'crownguard' }, theme: 'day', opts: { labels: 1, numbers: 1, deco: 1 }, sel: null, view: null, tool: null, tokType: 'hero', tokSize: 1.5, px: { city: 15, site: 70 }, items: [], notes: {}, measure: null };
   const TYPES = { hero: ['Hero', '#4f86d6'], foe: ['Foe', '#cc5a4f'], npc: ['NPC', '#6fa05d'], mount: ['Mount / beast', '#c4a363'] };
   const map = () => RT.MAPS[S.maps[S.level]];
   const tokens = () => S.items.filter(i => i.map === map().id && i.kind === 'token'), pins = () => S.items.filter(i => i.map === map().id && i.kind === 'pin');
@@ -60,7 +60,7 @@
   // ---------- export ----------
   function pxPerFt() { return S.px[S.level] / 5; }
   function exportDims() { const M = map(); let k = pxPerFt(), w = Math.round(M.w * k), h = Math.round(M.h * k); const mx = Math.max(w, h); if (mx > 16000) { const f = 16000 / mx; k *= f; w = Math.round(M.w * k); h = Math.round(M.h * k); } return { k, w, h }; }
-  function updateExportInfo() { const e = exportDims(); $('exInfo').textContent = `${num(e.w)} × ${num(e.h)} px\n5 ft = ${Math.round(e.k * 5 * 10) / 10} px · person = ${Math.round(e.k * 2.5 * 10) / 10} px`; $('exInfo').style.whiteSpace = 'pre-line'; }
+  function updateExportInfo() { const e = exportDims(); $('exInfo').textContent = `${num(e.w)} × ${num(e.h)} px\n5 ft = ${Math.round(e.k * 5 * 10) / 10} px · person = ${Math.round(e.k * 1.5 * 10) / 10} px`; $('exInfo').style.whiteSpace = 'pre-line'; }
   function fillPx() { const opts = S.level === 'city' ? [[10, '10 px per 5 ft'], [15, '15 px per 5 ft'], [20, '20 px per 5 ft'], [30, '30 px per 5 ft']] : [[50, '50 px per 5 ft'], [70, '70 px · Roll20'], [100, '100 px · Foundry'], [140, '140 px · hi-res']]; $('pxSel').innerHTML = opts.map(o => `<option value="${o[0]}">${o[1]}</option>`).join(''); if (!opts.some(o => o[0] === S.px[S.level])) S.px[S.level] = opts[1][0]; $('pxSel').value = S.px[S.level]; }
   function serialize(clean) {
     const M = map(), e = exportDims(), c = svg.cloneNode(true); c.setAttribute('viewBox', `0 0 ${M.w} ${M.h}`); c.setAttribute('width', e.w); c.setAttribute('height', e.h); c.setAttribute('xmlns', 'http://www.w3.org/2000/svg'); c.removeAttribute('class'); c.removeAttribute('style');
@@ -110,11 +110,11 @@
     const e = exportDims(), per5 = e.k * 5; let rows = '';
     SIZES.forEach(s => { const u = 5, d = s[1] * u; rows += `<div><svg width="${Math.max(d, 8)}" height="${Math.max(d, 8)}" viewBox="0 0 ${Math.max(d, 8)} ${Math.max(d, 8)}"><circle cx="${Math.max(d, 8) / 2}" cy="${Math.max(d, 8) / 2}" r="${d / 2 * .94}" fill="#4f86d6" stroke="#fff" stroke-width="1.2"/></svg><b>${s[0]}</b><span>${s[1]} ft · ${Math.round(s[1] * e.k * 10) / 10} px</span></div>`; });
     return `<div class="eyebrow">Scale guide</div><h2 class="title sm">Scale &amp; tokens</h2>
-      <p class="lede">Everything is drawn in feet. A token is the creature’s <b>body footprint</b>: an average person is <b>2.5 ft</b> across (about 2 ft at the shoulders). Tokens go anywhere and can be dragged. The 5-ft D&amp;D “square” is the space a creature controls, not its body.</p>
+      <p class="lede">Everything is drawn in feet. A token is the creature’s <b>body footprint</b>: an average person is <b>1.5 ft</b> (18 in) across the shoulders. Tokens go anywhere and can be dragged. The 5-ft D&amp;D “square” is the space a creature controls, not its body.</p>
       <h3 class="sec">Token sizes, to scale</h3><div class="sizes">${rows}</div>
-      <h3 class="sec">At this export resolution</h3><dl class="dims"><div><dt>5 ft</dt><dd>${Math.round(per5 * 10) / 10} px</dd></div><div><dt>Person</dt><dd>${Math.round(per5 / 2 * 10) / 10} px</dd></div><div><dt>Image</dt><dd>${num(e.w)} × ${num(e.h)} px</dd></div></dl>
+      <h3 class="sec">At this export resolution</h3><dl class="dims"><div><dt>5 ft</dt><dd>${Math.round(per5 * 10) / 10} px</dd></div><div><dt>Person</dt><dd>${Math.round(per5 * .3 * 10) / 10} px</dd></div><div><dt>Image</dt><dd>${num(e.w)} × ${num(e.h)} px</dd></div></dl>
       <h3 class="sec">VTT setup</h3><dl class="dims"><div><dt>1</dt><dd>Import the VTT-ready PNG (art only)</dd></div><div><dt>2</dt><dd>Set the scene scale so 5 ft = ${Math.round(per5 * 10) / 10} px</dd></div><div><dt>3</dt><dd>Turn the grid off</dd></div></dl>
-      <h3 class="sec">Reference sizes</h3><dl class="dims"><div><dt>Doors</dt><dd>3–3.5 ft · double 6 ft</dd></div><div><dt>Walls</dt><dd>interior 1.6 ft · exterior 2 ft · city 12 ft</dd></div><div><dt>Streets</dt><dd>main 26 ft · other 16 ft</dd></div><div><dt>Houses</dt><dd>20–30 ft frontage · 32–38 ft deep</dd></div></dl>
+      <h3 class="sec">Reference sizes</h3><dl class="dims"><div><dt>Furniture</dt><dd>chair 1.5 ft · table 3 ft wide · sofa 6.5 ft</dd></div><div><dt>Doors</dt><dd>3 ft · double 5 ft · entrance 6 ft</dd></div><div><dt>Walls</dt><dd>interior 1.2 ft · exterior 2 ft · city 10 ft</dd></div><div><dt>Streets</dt><dd>main 24 ft · other 14 ft</dd></div><div><dt>Houses</dt><dd>20–30 ft frontage · 32–38 ft deep</dd></div></dl>
       <div class="acts"><button class="btn" data-act="back">← Back</button></div>`;
   }
   function tokenPanel() {
@@ -171,7 +171,7 @@
   $('zIn').onclick = () => zoomBy(1 / 1.35); $('zOut').onclick = () => zoomBy(1.35); $('zReset').onclick = () => { S.view = fullView(map()); applyView(); };
   window.addEventListener('resize', () => { if (S.view) applyView(); });
 
-  const HINT = 'Tokens go anywhere (no grid) and can be dragged. An average person is a 2.5-ft token.';
+  const HINT = 'Tokens go anywhere (no grid) and can be dragged. An average person is a 1.5-ft token.';
   function setTool(t) {
     S.tool = S.tool === t ? null : t; if (S.tool !== 'measure') S.measure = null;
     $('toolToken').classList.toggle('on', S.tool === 'token'); $('toolPin').classList.toggle('on', S.tool === 'pin'); $('toolMeasure').classList.toggle('on', S.tool === 'measure');
@@ -188,7 +188,7 @@
   function init() {
     load(); $('themeSel').value = S.theme; $('toolHint').textContent = HINT;
     $('tokType').innerHTML = Object.keys(TYPES).map(k => `<option value="${k}">${TYPES[k][0]}</option>`).join('');
-    $('tokSize').innerHTML = SIZES.map(s => `<option value="${s[1]}" ${s[1] === 2.5 ? 'selected' : ''}>${s[0]} · ${s[1]} ft</option>`).join('');
+    $('tokSize').innerHTML = SIZES.map(s => `<option value="${s[1]}" ${s[1] === 1.5 ? 'selected' : ''}>${s[0]} · ${s[1]} ft</option>`).join('');
     [['tLabels', 'labels'], ['tNumbers', 'numbers'], ['tDeco', 'deco']].forEach(([id, key]) => { $(id).checked = !!S.opts[key]; $(id).onchange = () => { S.opts[key] = $(id).checked ? 1 : 0; save(); renderOverlay(); }; });
     $('themeSel').onchange = () => { S.theme = $('themeSel').value; save(); drawArt(); };
     $('mapSel').onchange = () => { S.maps[S.level] = $('mapSel').value; S.sel = null; S.view = null; drawArt(); renderPanel(); };
