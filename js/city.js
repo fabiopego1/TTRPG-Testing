@@ -147,6 +147,7 @@
       g += '</g>';
       if (o.labels && l.type !== 'gate') g += `<text x="${x}" y="${y + (EXCL[l.type] || 30) * .75 + 14}" text-anchor="middle" font-size="12" font-family="Cinzel,Georgia,serif" fill="${p.ink}" stroke="${p.halo}" stroke-width="3.4" paint-order="stroke" pointer-events="none">${RT.esc(l.n)}</text>`;
     });
+    if (o.grid) { const st = 100 / (T.ft || 1.5); let gl = ''; for (let x = 0; x <= RT.W; x += st) gl += `M${x.toFixed(1)} 0V${RT.H}`; for (let y = 0; y <= RT.H; y += st) gl += `M0 ${y.toFixed(1)}H${RT.W}`; g += `<path id="grid" d="${gl}" fill="none" stroke="${p.ink}" stroke-opacity=".16" stroke-width="1" pointer-events="none"/>`; }
     // night overlay + lanterns
     if (night) {
       g += `<rect x="-3000" y="-3000" width="7600" height="7000" fill="#06142e" opacity=".32" pointer-events="none"/>`;

@@ -26,12 +26,7 @@
       <label class="fld" id="fldCity">City or town<select id="citySel"></select></label>
       <label class="fld" id="fldScenario">Battle map<select id="scenarioSel"></select></label>
       <label class="fld">Era<select id="eraSel"></select></label>
-      <button id="loreBtn" class="btn">Demacia primer</button>
-    </section>
-    <section>
-      <h3>Seed</h3>
-      <div class="row"><input id="seed" type="text" spellcheck="false" aria-label="Seed"><button id="rollSeed" title="Random seed" class="sq">⟳</button></div>
-      <p class="hint" id="seedHint">Re-roll for new building layouts and battle-map terrain. Landmarks stay in place.</p>
+      <div class="col"><button id="loreBtn" class="btn">Demacia primer</button><button id="scaleBtn" class="btn gold">Scale &amp; token guide</button></div>
     </section>
     <section>
       <h3>Style</h3>
@@ -39,22 +34,25 @@
       <div class="checks">
         <label><input type="checkbox" id="tLabels" checked>Labels</label>
         <label id="lNumbers"><input type="checkbox" id="tNumbers" checked>Numbers</label>
-        <label id="lGrid"><input type="checkbox" id="tGrid" checked>Square grid</label>
+        <label id="lGrid"><input type="checkbox" id="tGrid" checked><span id="gridLbl">Square grid</span></label>
         <label><input type="checkbox" id="tDeco" checked>Frame &amp; compass</label>
       </div>
     </section>
     <section>
       <h3>Pins</h3>
       <div class="row"><select id="pinType" aria-label="Pin type"></select><button id="pinMode" class="btn">Place</button></div>
-      <p class="hint">Toggle “Place”, then click the map to drop an NPC, quest hook, encounter, or (on battle maps) hero/foe tokens.</p>
+      <label class="fld" id="fldSize" style="margin-top:8px">Token size<select id="pinSize"></select></label>
+      <p class="hint" id="pinHint">Toggle “Place”, then click the map.</p>
     </section>
     <section>
       <h3>Export</h3>
       <div class="col">
         <button id="exSvg" class="btn">Download SVG</button>
         <button id="exPng" class="btn">Download PNG</button>
-        <button id="exVtt" class="btn gold" title="No labels, frame or pins; battle maps export at 70 px per square">VTT-ready PNG</button>
+        <button id="exVtt" class="btn gold" title="No labels, frame, grid or pins">VTT-ready PNG</button>
       </div>
+      <label class="fld" id="fldPx" style="margin-top:8px">Pixels per 5-ft square<select id="pxSel"><option value="50">50 px</option><option value="70" selected>70 px — Roll20 default</option><option value="100">100 px — Foundry default</option><option value="140">140 px — hi-res</option></select></label>
+      <p class="hint" id="exInfo"></p>
     </section>
     <section>
       <h3>Campaign</h3>

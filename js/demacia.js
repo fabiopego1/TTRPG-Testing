@@ -18,17 +18,13 @@ window.RT = window.RT || {};
       peace: ['A prisoner escaped the Mageseekers’ cells — and no one will say how.', 'The Illuminators smuggle mages inside funeral processions.', 'Petricite is running out; quarrymen say the stone-trees no longer grow.', 'A Noxian agent was seen near the Citadel after dark.', 'House Laurent is quietly buying up duelists’ contracts.', 'The Silverwing riders say the raptors are unsettled lately.'],
       turmoil: ['Sylas the Unshackled was seen in the lower wards, rallying freed mages.', 'The Mageseekers’ Arcane Registry has been ransacked — or sold.', 'Nobles argue whether the king should be crowned at all.', 'Some Vanguard have refused orders to arrest mages.', 'A song about the Winged Sisters is banned in one district and sung openly in the next.', 'The Noxians are watching the border for weakness.']
     },
-    street: {
-      peace: ['A Vanguard checkpoint demands papers and a petricite scan', 'Pilgrims en route to the Temple ask the party for escort', 'A Mageseeker patrol hauls someone out of a bakery', 'A noble’s carriage blocks the road; a squire demands the party yield', 'A street preacher denounces “the unseen taint”', 'A child pickpockets the party, dropping a note'],
-      turmoil: ['A shouting crowd of mage-sympathizers faces a line of Vanguard', 'Former Mageseekers hide their tabards in an alley', 'A mage in hiding begs the party for passage', 'A noble’s retinue marches to a council meeting; fights break out', 'Posters of Sylas are torn down and pasted up again', 'Illuminators hand out bread — and messages']
-    },
     sources: [['Demacia (wiki)', 'https://wiki.leagueoflegends.com/en-us/Universe:Demacia'], ['The Great City of Demacia', 'https://wiki.leagueoflegends.com/en-us/Universe:The_Great_City_of_Demacia'], ['High Silvermere', 'https://wiki.leagueoflegends.com/en-us/High_Silvermere'], ['Dawnhold', 'https://wiki.leagueoflegends.com/en-us/Dawnhold'], ['Custodian Wall', 'https://wiki.leagueoflegends.com/en-us/Custodian_Wall'], ['Greenfang Mountains', 'https://wiki.leagueoflegends.com/en-us/Universe:Greenfang_Mountains']]
   };
 
   // ---------------------------------------------------------------- cities (coords are relative, -1..1)
   RT.DEMACIA_CITIES = [
     {
-      id: 'demacia', name: 'The Great City of Demacia', short: 'Great City', tag: 'Capital · seat of House Lightshield', ground: '#d8d5c0', view: { cx: 800, cy: 525, sx: 600, sy: 380 }, outside: 'fields',
+      id: 'demacia', seed: 'v1', ft: 2.5, name: 'The Great City of Demacia', short: 'Great City', tag: 'Capital · seat of House Lightshield', ground: '#d8d5c0', view: { cx: 800, cy: 525, sx: 600, sy: 380 }, outside: 'fields',
       summary: 'Largest city in the kingdom, on a plateau by the sea. Towering spires of petricite and marble rise around King’s Rock, where the Citadel of Dawn is carved from the stone itself. Most noble houses live here; magic is officially denied.',
       wall: [[-.92, -.12], [-.82, -.5], [-.5, -.78], [-.1, -.88], [.35, -.82], [.72, -.62], [.93, -.25], [.95, .2], [.78, .5], [.4, .66], [-.1, .72], [-.55, .66], [-.85, .4]],
       water: [[[-1.5, .8], [-.8, .78], [-.4, .84], [0, .81], [.5, .83], [1, .78], [1.5, .8], [1.5, 1.5], [-1.5, 1.5]]],
@@ -72,7 +68,7 @@ window.RT = window.RT || {};
       ]
     },
     {
-      id: 'silvermere', name: 'High Silvermere', short: 'High Silvermere', tag: 'City of Raptors · seat of House Crownguard', ground: '#cdd1c9', view: { cx: 800, cy: 540, sx: 570, sy: 370 }, outside: 'rocks',
+      id: 'silvermere', seed: 'v1', ft: 2, name: 'High Silvermere', short: 'High Silvermere', tag: 'City of Raptors · seat of House Crownguard', ground: '#cdd1c9', view: { cx: 800, cy: 540, sx: 570, sy: 370 }, outside: 'rocks',
       summary: 'A highland city in the crags of northern Demacia, built beside Knight’s Rock and a waterfall. The Crownguard Mansion stands at the foot of the rock; the Raptor Aerie crowns its summit.',
       wall: [[-.7, -.2], [-.55, -.6], [-.1, -.78], [.4, -.7], [.78, -.35], [.85, .15], [.6, .55], [.1, .7], [-.4, .6], [-.75, .3]],
       rivers: [{ pts: [[.78, -1.15], [.72, -.8], [.7, -.5], [.62, -.2], [.48, .1], [.35, .4], [.3, .75], [.38, 1.2]], w: 26 }],
@@ -101,7 +97,7 @@ window.RT = window.RT || {};
       ]
     },
     {
-      id: 'dawnhold', name: 'Dawnhold', short: 'Dawnhold', tag: 'Coastal fortress-town · Westerley', ground: '#d9d2b8', view: { cx: 800, cy: 540, sx: 580, sy: 370 }, outside: 'fields',
+      id: 'dawnhold', seed: 'v1', ft: 2, name: 'Dawnhold', short: 'Dawnhold', tag: 'Coastal fortress-town · Westerley', ground: '#d9d2b8', view: { cx: 800, cy: 540, sx: 580, sy: 370 }, outside: 'fields',
       summary: 'A coastal fortified settlement in the Westerley region. Famous for the Battle of Dawnhold, where Knight Varya of the Dauntless Vanguard burned a Freljordian sea-wolf fleet; her twin Rodion then raided Frostheld.',
       wall: [[-.4, -.65], [.1, -.78], [.62, -.5], [.82, -.02], [.72, .5], [.2, .72], [-.38, .62], [-.55, .25], [-.55, -.3]],
       water: [[[-1.5, -1.3], [-.65, -1.2], [-.58, -.6], [-.66, -.2], [-.4, .0], [-.22, .15], [-.4, .35], [-.64, .5], [-.62, .9], [-1.5, 1.4]]],
@@ -127,7 +123,7 @@ window.RT = window.RT || {};
       ]
     },
     {
-      id: 'terbisia', name: 'Terbisia', short: 'Terbisia', tag: 'Riverside town · Lower Demacia', ground: '#cdd8b0', view: { cx: 800, cy: 540, sx: 520, sy: 340 }, outside: 'fields',
+      id: 'terbisia', seed: 'v1', ft: 1.5, name: 'Terbisia', short: 'Terbisia', tag: 'Riverside town · Lower Demacia', ground: '#cdd8b0', view: { cx: 800, cy: 540, sx: 520, sy: 340 }, outside: 'fields',
       summary: 'A riverside settlement in Lower Demacia, south of the Greenfang Mountains. Farmers, millers and bargemen sit on the trade route between the mountains and the south.',
       wall: [[-.8, -.3], [-.4, -.6], [.2, -.65], [.7, -.35], [.82, .2], [.4, .6], [-.2, .65], [-.7, .35]],
       rivers: [{ pts: [[-1.3, -.15], [-.7, -.05], [-.2, .1], [.3, .0], [.8, .12], [1.3, .3]], w: 40 }],
@@ -150,7 +146,7 @@ window.RT = window.RT || {};
       ]
     },
     {
-      id: 'fossbarrow', name: 'Fossbarrow', short: 'Fossbarrow', tag: 'Far-northern border town', ground: '#e0e8ee', view: { cx: 800, cy: 540, sx: 520, sy: 340 }, outside: 'snow',
+      id: 'fossbarrow', seed: 'v1', ft: 1.5, name: 'Fossbarrow', short: 'Fossbarrow', tag: 'Far-northern border town', ground: '#e0e8ee', view: { cx: 800, cy: 540, sx: 520, sy: 340 }, outside: 'snow',
       summary: 'A far-northern town on the Freljord frontier. Cold, quiet and watchful; its palisade has withstood raids for generations.',
       wall: [[-.7, -.4], [-.2, -.7], [.4, -.65], [.8, -.2], [.75, .35], [.2, .65], [-.45, .6], [-.8, .15]],
       districts: [
@@ -171,7 +167,7 @@ window.RT = window.RT || {};
       ]
     },
     {
-      id: 'meltridge', name: 'Meltridge', short: 'Meltridge', tag: 'Eastern foothills town · Greenfang', ground: '#d6cfb8', view: { cx: 800, cy: 540, sx: 520, sy: 340 }, outside: 'rocks',
+      id: 'meltridge', seed: 'v1', ft: 1.5, name: 'Meltridge', short: 'Meltridge', tag: 'Eastern foothills town · Greenfang', ground: '#d6cfb8', view: { cx: 800, cy: 540, sx: 520, sy: 340 }, outside: 'rocks',
       summary: 'An eastern Demacian settlement in the Greenfang foothills, near the Custodian Wall. Site of a tense diplomatic convoy incident with Arbormark.',
       wall: [[-.75, -.2], [-.4, -.62], [.2, -.7], [.72, -.38], [.82, .15], [.5, .6], [-.1, .68], [-.65, .4]],
       districts: [
@@ -195,33 +191,12 @@ window.RT = window.RT || {};
 
   // ---------------------------------------------------------------- battle scenarios
   RT.DEMACIA_BATTLES = [
-    { id: 'cloudwoods', name: 'Cloudwoods Road Ambush', tag: 'Lower Demacia · forest road', desc: 'A narrow dirt road through the Cloudwoods. A broken cart blocks the way. A stream and a stone bridge split the field in two.',
-      obj: ['Escort the cart across the bridge', 'Rout the ambushers before reinforcements arrive', 'Capture the ambush leader alive'],
-      enc: ['Bandits in Demacian tabards', 'Noxian scouts testing the border', 'A rogue Mageseeker patrol', 'Wolves driven by something unnatural', 'A knight errant who thinks the party are the ambushers', 'A hidden mage fleeing pursuit'],
-      twist: ['Heavy fog rolls in (heavily obscured beyond 30 ft)', 'The cart’s cargo is a prisoner in petricite chains', 'A raptor circles above — someone is watching', 'A tree falls across the road at round 3', 'Reinforcements arrive from the east at round 5', 'A hidden sniper fires from the treeline'] },
-    { id: 'custodian', name: 'Custodian Wall at Greenfang Pass', tag: 'Eastern border · fortress', desc: 'A line of linked bastions across Greenfang Pass. North: the rocky approach. South: the Demacian yard, barracks and ballistae.',
-      obj: ['Hold the gate for ten rounds', 'Seize the ballistae', 'Break the siege ladders'],
-      enc: ['A Noxian raiding force with grapnels', 'Noxian siege engineers and a ram', 'A sapper team tunneling the gate', 'A defecting Vanguard officer', 'A diplomatic envoy under truce', 'A Silverwing patrol in need of help'],
-      twist: ['The gate’s winch is jammed', 'A rockslide blocks the pass at round 4', 'A traitor opens the postern', 'Fog hides the northern approach', 'The ballistae are out of bolts', 'A storm lashes the ramparts'] },
-    { id: 'plaza', name: 'Great City Plaza Skirmish', tag: 'Great City · riot', desc: 'The marble Grand Plaza, ringed by townhouses and market stalls. Streets feed in from every direction.',
-      obj: ['Protect a witness until the Vanguard arrive', 'Break up the riot without bloodshed', 'Reach the Citadel steps'],
-      enc: ['Vanguard line-breakers', 'Rioters armed with market tools', 'Sylas’ followers', 'Former Mageseekers in plain clothes', 'Noble guards escorting a carriage', 'Street thieves exploiting the chaos'],
-      twist: ['A stall catches fire (spreads each round)', 'A crowd surge pushes everyone 10 ft', 'A fountain statue topples at round 3', 'A herald calls for calm — and is ignored', 'A noble’s carriage bolts through the crowd', 'A raptor swoops over the plaza'] },
-    { id: 'mageseekers', name: 'Mageseekers Complex — Petricite Cells', tag: 'Great City · prison break', desc: 'A petricite prison: cells on both sides of a long hall, a guard station in the middle and the Arcane Registry at the east end.',
-      obj: ['Free the prisoner in the marked cell', 'Steal pages from the Arcane Registry', 'Escape through the west gate without raising the alarm'],
-      enc: ['Mageseeker jailers with petricite shackles', 'Vanguard reinforcements', 'A prisoner who doesn’t want rescue', 'Archivists defending the Registry', 'A hidden Illuminator inside', 'A captured mage turned informant'],
-      twist: ['An alarm bell rings every round (DC 12 Stealth to mute)', 'Petricite dampens magic — spells fail at the start', 'A cell door jams open', 'The Registry shelves collapse', 'A prisoner is set free by the chaos', 'A sympathetic guard looks the other way'] },
-    { id: 'dawnhold', name: 'Dawnhold Harbor Raid', tag: 'Westerley coast · naval', desc: 'A cobbled harbor with three piers, moored ships and warehouses. The fortress wall runs along the north.',
-      obj: ['Hold the quay against raiders', 'Burn the enemy ships', 'Rescue captured dockworkers'],
-      enc: ['Freljordian sea-wolf raiders', 'Pirates in Noxian pay', 'A smuggler fleeing the guard', 'A press gang', 'Vanguard marines', 'A sea monster drawn by the noise'],
-      twist: ['A fire ship drifts toward the pier', 'High tide floods the lowest quay', 'The chain boom snaps', 'A warehouse of oil ignites', 'A storm bell rings the whole harbor awake', 'A raptor drops a message on the pier'] },
-    { id: 'manor', name: 'Noble Manor Gala', tag: 'Great City · intrigue', desc: 'A walled manor garden with a fountain, hedge rooms and a grand terrace. A gala is underway; an assassination is imminent.',
-      obj: ['Protect the noble before dusk', 'Unmask the assassin', 'Smuggle a mage out of the garden'],
-      enc: ['Hired assassins in servants’ livery', 'House guards on edge', 'A rival duelist', 'Illuminators in disguise', 'A drunken noble', 'A Noxian agent as a guest'],
-      twist: ['The lights go out at round 3', 'A hedge door closes behind the party', 'A guest collapses poisoned', 'Fireworks mask a signal', 'The fountain is rigged with explosives', 'The host makes a startling announcement'] },
-    { id: 'aerie', name: 'Silverwing Aerie Cliffs', tag: 'High Silvermere · crag', desc: 'A windswept plateau atop a crag with a roost hall, nests, narrow stone bridges and a sheer drop on every side.',
-      obj: ['Recover a stolen egg', 'Hold the roost hall', 'Cross the bridges before the raptors return'],
-      enc: ['Silverwing raptors defending the nest', 'Egg thieves in climbing gear', 'Raptor-Knights who suspect the party', 'A feral raptor', 'Freljord skirmishers', 'A rogue Mageseeker'],
-      twist: ['A gale buffets everyone (Str save DC 12 near edges)', 'A raptor dives for a target', 'A bridge shakes and begins to give', 'A cloud bank hides the cliff edge', 'A torch falls into dry straw', 'A nest egg begins to hatch'] }
+    { id: 'cloudwoods', seed: 'v1', features: ["Dirt road: 15 ft wide, runs west to east.", "Stream: 10 ft wide; stone bridge: 15 ft wide (3 squares) — a chokepoint.", "Broken wagon (10×5 ft) with crates blocks the road; half cover.", "Trees: trunk blocks movement, canopy gives half cover. Forest floor hides tracks.", "Roadside statue: three-quarters cover."], name: 'Cloudwoods Road Ambush', tag: 'Lower Demacia · forest road', desc: 'A narrow dirt road through the Cloudwoods. A broken cart blocks the way. A stream and a stone bridge split the field in two.', },
+    { id: 'custodian', seed: 'v1', features: ["Wall: 15 ft thick (3 squares), walkway on top is 10 ft above ground and reached by stairs only.", "Gate: 20 ft wide (4 squares), winch-operated.", "Towers at each end of the wall: arrow slits give three-quarters cover.", "Two ballistae on the rampart: 3d10 piercing, range 120/480 ft.", "North side: rocky scree and boulders; south side: cobbled yard, two 35×25 ft buildings.", "Outer edges: sheer drop."], name: 'Custodian Wall at Greenfang Pass', tag: 'Eastern border · fortress', desc: 'A line of linked bastions across Greenfang Pass. North: the rocky approach. South: the Demacian yard, barracks and ballistae.', },
+    { id: 'plaza', seed: 'v1', features: ["Grand Plaza: marble, about 70×60 ft, with a 10×10 ft fountain.", "Main streets: 20–30 ft wide (4–6 squares) in four directions; alleys: 5 ft.", "Market stalls: half cover, can be overturned.", "Buildings: impassable from outside; doors open onto the plaza and streets.", "Marble floor is slippery when running: Stealth is noisy."], name: 'Great City Plaza Skirmish', tag: 'Great City · riot', desc: 'The marble Grand Plaza, ringed by townhouses and market stalls. Streets feed in from every direction.', },
+    { id: 'mageseekers', seed: 'v1', features: ["Petricite floor throughout: magic is dampened (suggested house rule: disadvantage on spellcasting; low-level spells fail).", "Cells: 25×30 ft with iron bars (door 5 ft). Cell bars: see-through, half cover from ranged.", "Central hall: 40 ft wide; guard station in the middle; pillars every 30 ft.", "Arcane Registry (east): shelves topple for 2d6 damage.", "West gate: 10 ft wide, the only way out."], name: 'Mageseekers Complex — Petricite Cells', tag: 'Great City · prison break', desc: 'A petricite prison: cells on both sides of a long hall, a guard station in the middle and the Arcane Registry at the east end.', },
+    { id: 'dawnhold', seed: 'v1', features: ["Fortress wall along the north, 10 ft thick, with a 20 ft gate.", "Three piers, each 10 ft wide; moored ships about 15×35 ft with a mast.", "Warehouses: two large (35×25 ft) and one small; crates and barrels give half cover.", "Shore: sand strip (difficult for wheels); shallow water then deep water.", "Fountain in the yard: 10×10 ft."], name: 'Dawnhold Harbor Raid', tag: 'Westerley coast · naval', desc: 'A cobbled harbor with three piers, moored ships and warehouses. The fortress wall runs along the north.', },
+    { id: 'manor', seed: 'v1', features: ["Manor house: 100×30 ft, grand doors 10 ft wide, marble terrace with pillars.", "Garden walls: 5 ft thick; gate at the south, 20 ft wide.", "Hedge rooms: hedges give half cover and are difficult terrain.", "Central fountain: 10×10 ft; statues give three-quarters cover.", "Flower beds are open ground; the host will not be pleased."], name: 'Noble Manor Gala', tag: 'Great City · intrigue', desc: 'A walled manor garden with a fountain, hedge rooms and a grand terrace. A gala is underway; an assassination is imminent.', },
+    { id: 'aerie', seed: 'v1', features: ["Roost hall: 50×30 ft with pillared ring and a 10 ft door.", "Bridges: 5–10 ft wide, stone; low parapets.", "Nests: difficult terrain; eggs and parents nearby.", "Edge of the crag: sheer drop (60 ft+), strong wind.", "East waterfall: impassable and drenches those next to it."], name: 'Silverwing Aerie Cliffs', tag: 'High Silvermere · crag', desc: 'A windswept plateau atop a crag with a roost hall, nests, narrow stone bridges and a sheer drop on every side.', }
   ];
 })(window.RT);
