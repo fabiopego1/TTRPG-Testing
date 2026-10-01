@@ -171,6 +171,7 @@ window.RT = window.RT || {};
     swamp: { name: 'Blighted Marsh', cols: ['#6f8b72', '#5c7a65', '#85a389'], enc: ['Mist wraiths', 'Bog hag’s bargain', 'Quicksand', 'Lantern-bearer', 'Corrupted wildlife', 'Drowned soldiers rise'] },
     ruins: { name: 'Ruined Battleground', cols: ['#a39b85', '#8e866f', '#bab29a'], enc: ['Scavengers', 'Restless dead', 'Hidden cache beneath rubble', 'Rival adventurers', 'A collapsing wall', 'Mercenary camp'] },
     coast: { name: 'Coastal Shore', cols: ['#e1d3a3', '#d3c391', '#ede1b9'], enc: ['Smugglers on the beach', 'Sea-monster tentacle', 'A beached ship with cargo', 'Press gang', 'Tidal surge', 'Crab-folk toll collectors'] },
+    lab: { name: 'Zaun Laboratory', cols: ['#26332f', '#2c3a3a', '#34443f'], enc: ['A malfunctioning chem-sentry powers up (turret, AC 15, 1d8 acid bolt)', 'A shimmer-mutated test subject bursts out of its cage', 'A vat ruptures — toxic fog fills the room (Con DC 13 each round)', 'Rival chem-baron thugs arrive to seize the research', 'A cornered lab assistant offers a bargain for safe passage', 'An emergency purge starts: doors lock in 3 rounds'] },
     mountain: { name: 'Mountain Pass', cols: ['#a7a39c', '#8f8b84', '#bdb9b0'], enc: ['Rockslide', 'Pass guards', 'Mountain goats… and what hunts them', 'A sleeping drake', 'Pilgrim shrine', 'Collapsing bridge'] }
   };
   RT.BIOME_OF_REGION = { tundra: 'snow', temperate: 'plains', urban: 'ruins', highland: 'mountain', desert: 'desert', jungle: 'forest', spirit: 'forest', archipelago: 'coast', blighted: 'swamp', whimsy: 'forest' };

@@ -271,9 +271,79 @@
   };
 
   // ---------- battle map ----------
+
+  // ---------- Zaun laboratory (indoor battle map) ----------
+  const labCache = {};
+  const WALK = { floor: 1, spill: 1, vent: 1, ladder: 1, door: 1 };
+  RT.labLayout = function (seed) {
+    if (labCache[seed]) return labCache[seed];
+    const B = RT.BATTLE, r = RT.rng(seed + '|lab'), g = [], rooms = [], objs = [];
+    for (let y = 0; y < B.rows; y++) { g.push([]); for (let x = 0; x < B.cols; x++) g[y].push({ x, y, type: (x === 0 || y === 0 || x === B.cols - 1 || y === B.rows - 1) ? 'wall' : 'floor', room: -1 }); }
+    const at = (x, y) => g[y] && g[y][x];
+    (function split(x0, y0, x1, y1, depth) {
+      const w = x1 - x0 + 1, h = y1 - y0 + 1, canV = w >= 14, canH = h >= 12;
+      if (depth === 0 || (!canV && !canH) || (depth < 3 && rooms.length > 2 && r() < .12)) { rooms.push({ x0, y0, x1, y1 }); return; }
+      if (canV && (!canH || w / h > 1.25 || r() < .35)) {
+        const sx = x0 + 5 + Math.floor(r() * (w - 10)), dy = y0 + 1 + Math.floor(r() * (h - 3));
+        for (let y = y0; y <= y1; y++) at(sx, y).type = 'wall'; at(sx, dy).type = 'door'; at(sx, dy + 1).type = 'door';
+        split(x0, y0, sx - 1, y1, depth - 1); split(sx + 1, y0, x1, y1, depth - 1);
+      } else {
+        const sy = y0 + 4 + Math.floor(r() * (h - 8)), dx = x0 + 1 + Math.floor(r() * (w - 3));
+        for (let x = x0; x <= x1; x++) at(x, sy).type = 'wall'; at(dx, sy).type = 'door'; at(dx + 1, sy).type = 'door';
+        split(x0, y0, x1, sy - 1, depth - 1); split(x0, sy + 1, x1, y1, depth - 1);
+      }
+    })(1, 1, B.cols - 2, B.rows - 2, 3);
+    rooms.forEach((rm, i) => { rm.i = i; rm.area = (rm.x1 - rm.x0 + 1) * (rm.y1 - rm.y0 + 1); for (let y = rm.y0; y <= rm.y1; y++) for (let x = rm.x0; x <= rm.x1; x++) at(x, y).room = i; });
+    const connected = () => {
+      let tot = 0, start = null; g.forEach(row => row.forEach(c => { if (WALK[c.type]) { tot++; if (!start) start = c; } }));
+      const seen = new Set([start]), q = [start];
+      while (q.length) { const c = q.pop(); [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(d => { const n = at(c.x + d[0], c.y + d[1]); if (n && WALK[n.type] && !seen.has(n)) { seen.add(n); q.push(n); } }); }
+      return seen.size === tot;
+    };
+    const nearDoor = (x, y) => { for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const c = at(x + dx, y + dy); if (c && c.type === 'door') return true; } return false; };
+    const place = (rm, kind, w, h, extra) => {
+      for (let t = 0; t < 70; t++) {
+        const x = rm.x0 + Math.floor(r() * (rm.x1 - rm.x0 + 2 - w)), y = rm.y0 + Math.floor(r() * (rm.y1 - rm.y0 + 2 - h)); let ok = true;
+        for (let yy = y; yy < y + h && ok; yy++) for (let xx = x; xx < x + w; xx++) { const c = at(xx, yy); if (c.type !== 'floor' || nearDoor(xx, yy)) { ok = false; break; } }
+        if (!ok) continue;
+        const walk = WALK[kind], o = Object.assign({ kind, x, y, w, h }, extra || {});
+        for (let yy = y; yy < y + h; yy++) for (let xx = x; xx < x + w; xx++) at(xx, yy).type = kind;
+        if (!walk && !connected()) { for (let yy = y; yy < y + h; yy++) for (let xx = x; xx < x + w; xx++) at(xx, yy).type = 'floor'; continue; }
+        objs.push(o); return o;
+      } return null;
+    };
+    const sorted = rooms.slice().sort((a, b) => b.area - a.area), roles = ['Vat Chamber', 'Specimen Cages', 'Control Room', 'Storage', 'Workshop'];
+    for (let i = roles.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [roles[i], roles[j]] = [roles[j], roles[i]]; }
+    const liquids = ['#5aff7a', '#b05cff', '#ffb23c', '#3cd8ff'];
+    sorted.forEach((rm, i) => {
+      rm.role = i === 0 ? 'Main Laboratory' : roles[(i - 1) % roles.length]; const k = RT.clamp(Math.sqrt(rm.area / 40), .6, 2.4), n = (a, b) => Math.max(1, Math.round((a + r() * (b - a)) * k));
+      const rep = (c, fn) => { for (let j = 0; j < c; j++) fn(); };
+      const vat = () => place(rm, 'vat', 2, 2, { liquid: RT.pick(r, liquids) }), tbl = () => r() < .5 ? place(rm, 'table', 3, 1) : place(rm, 'table', 2, 1), con = () => place(rm, 'console', 2, 1), crate = () => place(rm, 'crate', 1, 1), vent = () => place(rm, 'vent', 1, 1), cage = () => place(rm, 'cage', 2, 2, { occ: r() < .65 }), spill = () => place(rm, 'spill', 1, 1);
+      if (rm.role === 'Main Laboratory') { rep(n(3, 5), tbl); rep(n(1, 2), con); rep(1, vat); rep(2, crate); rep(3, spill); rep(1, vent); }
+      else if (rm.role === 'Vat Chamber') { rep(n(2, 4), vat); rep(n(1, 2), vent); rep(n(4, 7), spill); rep(1, con); }
+      else if (rm.role === 'Specimen Cages') { rep(n(2, 4), cage); rep(1, crate); rep(1, con); rep(2, spill); }
+      else if (rm.role === 'Control Room') { rep(n(3, 5), con); rep(1, tbl); rep(1, vent); }
+      else if (rm.role === 'Storage') { rep(n(7, 11), crate); rep(1, vent); }
+      else { rep(n(2, 3), tbl); rep(n(2, 4), crate); rep(1, con); rep(1, vent); }
+    });
+    place(rooms[Math.floor(r() * rooms.length)], 'ladder', 1, 1);
+    const owner = RT.genName(r, 'pil', 'person');
+    return (labCache[seed] = { cells: [].concat.apply([], g), rooms, objs, owner });
+  };
+  RT.LAB_ROLE = {
+    'Main Laboratory': 'Benches, gurneys and humming apparatus. The owner’s current obsession is half-assembled on the central table.',
+    'Vat Chamber': 'Rows of bubbling glass vats. Cracked glass means toxic fog; the liquid glows enough to read by.',
+    'Specimen Cages': 'Reinforced cages — some occupied, none labelled kindly. Latches are old, rusty and unreliable.',
+    'Control Room': 'Consoles control the vents, locks and purge system. A DC 13 Tinker’s check can seal or open any door.',
+    'Storage': 'Crates of reagents, spare limbs and things in jars. Searching takes time and might set something off.',
+    'Workshop': 'Half-finished hex-conduits, tools and scrap. A good place for a clever improvised weapon.'
+  };
+  const labCells = seed => RT.labLayout(seed).cells;
+
   RT.BATTLE = { cols: 36, rows: 24, cell: 40, ox: 80, oy: 20 };
   RT.battleBiomes = Object.keys(RT.BIOMES);
   RT.battleCells = function (seed, biome) {
+    if (biome === 'lab') return labCells(seed.split('|')[0]);
     const B = RT.BATTLE, bm = RT.BIOMES[biome], nzE = RT.noise(seed + '|e'), nzM = RT.noise(seed + '|m'), r = RT.rng(seed + '|b');
     const cells = [];
     // river path
@@ -298,6 +368,7 @@
     return cells;
   };
   RT.renderBattle = function (o) {
+    if (o.biome === 'lab') return RT.renderLab(o);
     const B = RT.BATTLE, cells = RT.battleCells(o.seed + '|' + o.biome, o.biome), hex = o.theme === 'hextech';
     const ink = '#2a1d10';
     let g = `<rect x="-2000" y="-2000" width="5600" height="5000" fill="${hex ? '#010a13' : '#3a2e22'}"/>`;
@@ -324,10 +395,69 @@
     g += `</g>`;
     return g;
   };
+
+  RT.renderLab = function (o) {
+    const B = RT.BATTLE, L = RT.labLayout(o.seed), c = B.cell, px = x => B.ox + x * c, py = y => B.oy + y * c, rr = RT.rng(o.seed + '|labdeco');
+    const defs = `<defs><radialGradient id="vglow"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+      <linearGradient id="screen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fffe8"/><stop offset="1" stop-color="#1b8f84"/></linearGradient></defs>`;
+    let g = defs + `<rect x="-2000" y="-2000" width="5600" height="5000" fill="#05090c"/>`;
+    // floor
+    g += '<g>';
+    L.cells.forEach(k => {
+      if (k.type === 'wall') return;
+      const x = px(k.x), y = py(k.y), alt = (k.x + k.y) % 2;
+      g += `<g class="cell" data-kind="cell" data-id="${k.x},${k.y}" data-type="${k.type}"><rect x="${x}" y="${y}" width="${c}" height="${c}" fill="${alt ? '#2a3633' : '#2f3c39'}"/>`
+        + `<path d="M${x + 4} ${y + 4}H${x + c - 4}V${y + c - 4}H${x + 4}Z" fill="none" stroke="#000" stroke-opacity=".28" stroke-width="1.5"/><path d="M${x + 4} ${y + c / 2}H${x + c - 4}M${x + c / 2} ${y + 4}V${y + c - 4}" stroke="#000" stroke-opacity=".14"/>`
+        + `<circle cx="${x + 3}" cy="${y + 3}" r="1.3" fill="#7a8a84" opacity=".6"/><circle cx="${x + c - 3}" cy="${y + c - 3}" r="1.3" fill="#7a8a84" opacity=".6"/>`;
+      if (k.type === 'spill') g += `<path d="M${x + 8} ${y + 22}Q${x + 6} ${y + 8} ${x + 20} ${y + 8}Q${x + 36} ${y + 6} ${x + 33} ${y + 22}Q${x + 34} ${y + 35} ${x + 18} ${y + 33}Q${x + 6} ${y + 33} ${x + 8} ${y + 22}Z" fill="#6bff6b" fill-opacity=".55" stroke="#b8ffb8" stroke-opacity=".6"/><circle cx="${x + 15}" cy="${y + 16}" r="3" fill="#d8ffd8" opacity=".6"/>`;
+      if (k.type === 'door') g += `<rect x="${x + 3}" y="${y + 3}" width="${c - 6}" height="${c - 6}" fill="#6b5326" stroke="#c8aa6e" stroke-width="2"/><path d="M${x + 3} ${y + c / 2}H${x + c - 3}" stroke="#c8aa6e" stroke-width="1.5"/>`;
+      g += '</g>';
+    });
+    g += '</g>';
+    // walls
+    L.cells.forEach(k => {
+      if (k.type !== 'wall') return; const x = px(k.x), y = py(k.y);
+      g += `<g class="cell" data-kind="cell" data-id="${k.x},${k.y}" data-type="wall"><rect x="${x}" y="${y}" width="${c}" height="${c}" fill="#171d21"/><rect x="${x + 2}" y="${y + 2}" width="${c - 4}" height="${c - 4}" fill="#222b30" stroke="#0a0e10"/><path d="M${x + 2} ${y + c / 2}H${x + c - 2}" stroke="#0a0e10" stroke-opacity=".7"/></g>`;
+    });
+    // pipes along walls
+    g += '<g fill="none" stroke-linecap="round" pointer-events="none">';
+    L.cells.forEach(k => {
+      if (k.type !== 'wall' || rr() > .45) return; const x = px(k.x), y = py(k.y), horiz = at2(L, k.x - 1, k.y) === 'wall' || at2(L, k.x + 1, k.y) === 'wall', col = rr() < .5 ? '#2f9f94' : '#a07a3a', off = (rr() < .5 ? 13 : 27);
+      g += horiz ? `<path d="M${x} ${y + off}H${x + c}" stroke="#05090c" stroke-width="9"/><path d="M${x} ${y + off}H${x + c}" stroke="${col}" stroke-width="6"/><circle cx="${x + c / 2}" cy="${y + off}" r="5" fill="${col}" stroke="#05090c" stroke-width="2"/>` : `<path d="M${x + off} ${y}V${y + c}" stroke="#05090c" stroke-width="9"/><path d="M${x + off} ${y}V${y + c}" stroke="${col}" stroke-width="6"/><circle cx="${x + off}" cy="${y + c / 2}" r="5" fill="${col}" stroke="#05090c" stroke-width="2"/>`;
+    });
+    g += '</g>';
+    // glows
+    L.objs.filter(ob => ob.kind === 'vat').forEach(ob => { const cx = px(ob.x) + c, cy = py(ob.y) + c; g += `<circle cx="${cx}" cy="${cy}" r="${c * 2.4}" fill="${ob.liquid}" opacity=".22" pointer-events="none"/>`; });
+    // objects
+    L.objs.forEach(ob => {
+      const x = px(ob.x), y = py(ob.y), w = ob.w * c, h = ob.h * c, cx = x + w / 2, cy = y + h / 2, hit = `data-kind="cell" data-id="${ob.x},${ob.y}"`;
+      if (ob.kind === 'vat') g += `<g class="cell" ${hit}><circle cx="${cx}" cy="${cy}" r="${c * .95}" fill="#3a3a30" stroke="#c8aa6e" stroke-width="3"/><circle cx="${cx}" cy="${cy}" r="${c * .78}" fill="${ob.liquid}" fill-opacity=".85" stroke="#05090c" stroke-width="2"/><circle cx="${cx}" cy="${cy}" r="${c * .78}" fill="url(#vglow)" opacity=".9"/><circle cx="${cx - 10}" cy="${cy + 8}" r="4" fill="#fff" opacity=".6"/><circle cx="${cx + 8}" cy="${cy - 6}" r="3" fill="#fff" opacity=".5"/><circle cx="${cx + 12}" cy="${cy + 14}" r="2" fill="#fff" opacity=".6"/><path d="M${cx - c * .6} ${cy - c * .25}A${c * .66} ${c * .66} 0 0 1 ${cx - c * .1} ${cy - c * .66}" fill="none" stroke="#fff" stroke-width="3" opacity=".7" stroke-linecap="round"/></g>`;
+      else if (ob.kind === 'table') { g += `<g class="cell" ${hit}><rect x="${x + 3}" y="${y + 6}" width="${w - 6}" height="${h - 12}" rx="3" fill="#5d574a" stroke="#05090c" stroke-width="2"/><rect x="${x + 6}" y="${y + 9}" width="${w - 12}" height="${h - 18}" fill="#6e6858" opacity=".7"/>`; for (let i = 0; i < ob.w; i++) g += `<circle cx="${x + i * c + 14}" cy="${cy}" r="5" fill="${['#5aff7a', '#b05cff', '#3cd8ff', '#ffb23c'][(ob.x + i) % 4]}" stroke="#05090c" stroke-width="1.5"/><rect x="${x + i * c + 22}" y="${cy - 6}" width="8" height="12" fill="#cfe8e4" opacity=".7" stroke="#05090c"/>`; g += '</g>'; }
+      else if (ob.kind === 'crate') g += `<g class="cell" ${hit}><rect x="${x + 4}" y="${y + 4}" width="${c - 8}" height="${c - 8}" fill="#6d5a36" stroke="#05090c" stroke-width="2"/><path d="M${x + 4} ${y + 4}L${x + c - 4} ${y + c - 4}M${x + c - 4} ${y + 4}L${x + 4} ${y + c - 4}" stroke="#3a2f1b" stroke-width="2"/></g>`;
+      else if (ob.kind === 'console') g += `<g class="cell" ${hit}><rect x="${x + 3}" y="${y + 5}" width="${w - 6}" height="${h - 10}" rx="3" fill="#10181c" stroke="#c8aa6e" stroke-width="2"/><rect x="${x + 8}" y="${y + 9}" width="${w - 16}" height="${h - 24}" fill="url(#screen)" opacity=".85"/><path d="M${x + 12} ${y + 14}h14M${x + 12} ${y + 19}h24" stroke="#05222a" stroke-width="2"/><circle cx="${x + w - 12}" cy="${y + h - 10}" r="2.5" fill="#ff5a5a"/><circle cx="${x + w - 22}" cy="${y + h - 10}" r="2.5" fill="#5aff7a"/></g>`;
+      else if (ob.kind === 'cage') { g += `<g class="cell" ${hit}><rect x="${x + 3}" y="${y + 3}" width="${w - 6}" height="${h - 6}" fill="#0c1215" stroke="#8a9090" stroke-width="3"/>`; for (let i = 1; i < 6; i++) g += `<path d="M${x + 3 + i * (w - 6) / 6} ${y + 3}V${y + h - 3}" stroke="#8a9090" stroke-width="2.5"/>`; if (ob.occ) g += `<ellipse cx="${cx}" cy="${cy + 6}" rx="${c * .5}" ry="${c * .38}" fill="#2a1d3a" stroke="#b05cff" stroke-opacity=".6"/><circle cx="${cx - 7}" cy="${cy}" r="3" fill="#ff5ad0"/><circle cx="${cx + 7}" cy="${cy}" r="3" fill="#ff5ad0"/>`; g += '</g>'; }
+      else if (ob.kind === 'vent') g += `<g class="cell" ${hit}><circle cx="${cx}" cy="${cy}" r="${c * .38}" fill="#10181c" stroke="#8a9090" stroke-width="2"/><path d="M${cx - 10} ${cy - 5}H${cx + 10}M${cx - 10} ${cy}H${cx + 10}M${cx - 10} ${cy + 5}H${cx + 10}" stroke="#8a9090" stroke-width="1.5"/><circle cx="${cx - 6}" cy="${cy - 14}" r="8" fill="#dfeeee" opacity=".28"/><circle cx="${cx + 8}" cy="${cy - 20}" r="6" fill="#dfeeee" opacity=".22"/></g>`;
+      else if (ob.kind === 'ladder') g += `<g class="cell" ${hit}><rect x="${x + 8}" y="${y + 3}" width="${c - 16}" height="${c - 6}" fill="#0c1215" stroke="#c8aa6e" stroke-width="2"/><path d="M${x + 12} ${y + 3}V${y + c - 3}M${x + c - 12} ${y + 3}V${y + c - 3}M${x + 12} ${y + 12}H${x + c - 12}M${x + 12} ${y + 20}H${x + c - 12}M${x + 12} ${y + 28}H${x + c - 12}" stroke="#c8aa6e" stroke-width="2"/></g>`;
+    });
+    // grid + labels
+    g += `<g id="grid" pointer-events="none" stroke="#8fffd4" stroke-opacity="${o.grid ? .16 : 0}" stroke-width="1">`;
+    for (let x = 0; x <= B.cols; x++) g += `<path d="M${px(x)} ${B.oy}V${B.oy + B.rows * c}"/>`;
+    for (let y = 0; y <= B.rows; y++) g += `<path d="M${B.ox} ${py(y)}H${B.ox + B.cols * c}"/>`;
+    g += '</g><g id="roomlabels" pointer-events="none" font-family="Cinzel,Georgia,serif" text-anchor="middle">';
+    L.rooms.forEach(rm => { g += `<text x="${(px(rm.x0) + px(rm.x1 + 1)) / 2}" y="${py(rm.y0) + 24}" font-size="13" letter-spacing="2" fill="#8fffd4" opacity=".55" stroke="#05090c" stroke-width="3" paint-order="stroke">${RT.esc(rm.role.toUpperCase())}</text>`; });
+    return g + '</g>';
+  };
+  function at2(L, x, y) { const B = RT.BATTLE; if (x < 0 || y < 0 || x >= B.cols || y >= B.rows) return null; return L.cells[y * B.cols + x].type; }
   RT.cellInfo = {
     ground: ['Open ground', 'Normal movement.'], difficult: ['Difficult terrain', 'Costs 2 ft of movement per 1 ft; may grant half cover (trees/brush).'],
     water: ['Water', 'Swimmable; DC 10 Athletics in current. Heavy armor sinks.'], bridge: ['Bridge / ford', 'Chokepoint — fits two Medium creatures abreast.'],
     block: ['Rock / obstacle', 'Blocks movement; full cover for Small creatures, half for Medium.'], mud: ['Bog', 'Difficult terrain; Dex save DC 12 or stuck (Restrained) 1 round.'],
-    cliff: ['Cliff / scree', 'Climb DC 13; fall damage 1d6 per 10 ft.'], rubble: ['Rubble', 'Difficult terrain; half cover.'], ice: ['Ice', 'Dex save DC 10 on Dash or be knocked prone.']
+    cliff: ['Cliff / scree', 'Climb DC 13; fall damage 1d6 per 10 ft.'], rubble: ['Rubble', 'Difficult terrain; half cover.'], ice: ['Ice', 'Dex save DC 10 on Dash or be knocked prone.'],
+    wall: ['Lab wall', 'Riveted plating; impassable. AC 17, 40 HP per 5-ft section if smashed.'], door: ['Pressure door', 'Opens as an action; the control room can lock it (Str DC 18 or Tinker’s DC 15 to force).'],
+    floor: ['Grated floor', 'Normal movement. Footsteps ring loudly — disadvantage on Stealth.'], vat: ['Chem vat', 'Blocks movement. If broken (AC 11, 10 HP): 10-ft puddle, 2d6 acid/poison (Con DC 13 half) and heavily obscured fog for 3 rounds.'],
+    table: ['Lab bench', 'Half cover; counts as difficult terrain to climb over. Beakers can be thrown (1d4 acid).'], crate: ['Supply crate', 'Half cover for Medium creatures; Search DC 12 for reagents or scrap.'],
+    console: ['Control console', 'Half cover. Tinker’s/Arcana DC 13: lock/unlock doors, vent a room, or trigger the purge.'], cage: ['Specimen cage', 'Blocks movement; bars give three-quarters cover. Lock DC 15 — a freed occupant may not be grateful.'],
+    vent: ['Steam vent', 'Walkable. Each round on initiative 20: Con DC 12 or 1d6 fire damage; steam heavily obscures adjacent squares.'], ladder: ['Ladder to the Sump', 'Leads down to the Undercity levels — a quick escape or a reinforcement route.'],
+    spill: ['Chem spill', 'Slippery: Dex DC 11 when moving through or fall prone. Reactive — fire ignites it (1d6, 5-ft burst).']
   };
 })(window.RT);

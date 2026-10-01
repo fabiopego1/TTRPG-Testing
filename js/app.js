@@ -122,7 +122,7 @@
       continent: 'Click a region or landmark to open its encounter tables, NPCs and hooks. Double-click to zoom into a regional or city map. Scroll to zoom, drag to pan.',
       region: 'Procedurally scattered terrain, hamlets, ruins and shrines fill the region. Click any marker for a generated hook and encounter.',
       city: 'Click numbered districts or gates for rumors, NPCs and encounters. Re-roll the seed for a fresh layout.',
-      battle: 'Each square is 5 ft. Click a square to read its terrain rules. Use “Place” to drop hero/foe tokens; export a gridless PNG at 70 px per square for your VTT.'
+      battle: (S.biome === 'lab' ? 'Dr. ' + RT.labLayout(S.seed).owner + '’s Zaun laboratory. ' : '') + 'Each square is 5 ft. Click a square to read its terrain rules. Use “Place” to drop hero/foe tokens; export a gridless PNG at 70 px per square for your VTT.'
     }[S.scale];
     return `<h2>${S.scale === 'continent' ? 'Runeterra' : S.scale === 'region' ? RT.regionById(S.regionId).name : S.scale === 'city' ? 'City Map' : 'Battle Map'}</h2><div class="tag">Seed: ${RT.esc(S.seed)}</div><p class="lore">${intro}</p>
       <h4>Regions</h4><div class="list">${list(RT.REGIONS, r => `<a data-act="selRegion" data-id="${r.id}">${r.name}<small>${threat(r.threat).replace(/<[^>]+>/g, '') ? 'Threat ' + r.threat : ''}</small></a>`)}</div>`;
@@ -165,7 +165,9 @@
   }
   function cellPanel(id) {
     const cell = RT.battleCells(S.seed + '|' + S.biome, S.biome).find(c => c.x + ',' + c.y === id), inf = RT.cellInfo[cell.type] || RT.cellInfo.ground;
-    return `<div class="tag">Square ${id.replace(',', ' · ')}</div><h2>${inf[0]}</h2><p class="lore">${inf[1]}</p>${cell.feat ? `<p class="empty">Feature: ${cell.feat}</p>` : ''}
+    let room = '';
+    if (S.biome === 'lab') { const L = RT.labLayout(S.seed), rm = L.rooms[cell.room]; room = `<h4>${RT.esc(rm ? rm.role : 'Outer wall')}</h4><p class="lore">${RT.esc(rm ? RT.LAB_ROLE[rm.role] : 'The laboratory’s outer shell.')}</p>`; }
+    return `<div class="tag">${S.biome === 'lab' ? 'Dr. ' + RT.esc(RT.labLayout(S.seed).owner) + '’s laboratory · ' : ''}Square ${id.replace(',', ' · ')}</div><h2>${inf[0]}</h2><p class="lore">${inf[1]}</p>${cell.feat ? `<p class="empty">Feature: ${cell.feat}</p>` : ''}${room}
       <h4>${RT.BIOMES[S.biome].name} encounters</h4>${encTable(RT.BIOMES[S.biome].enc, 'enc:b:' + S.biome)}${notesBox('cell:' + S.seed + ':' + S.biome + ':' + id)}`;
   }
   function pinPanel(p) {
@@ -290,7 +292,7 @@
     const c = svg.cloneNode(true), bx = exportBox(clean);
     c.setAttribute('viewBox', `${bx.x} ${bx.y} ${bx.w} ${bx.h}`); c.setAttribute('width', bx.px); c.setAttribute('height', bx.py); c.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
     c.removeAttribute('class'); c.removeAttribute('style');
-    if (clean) { ['pins', 'deco', 'grid'].forEach(id => { const n = c.querySelector('#' + id); if (n) n.remove(); }); }
+    if (clean) { ['pins', 'deco', 'grid', 'roomlabels'].forEach(id => { const n = c.querySelector('#' + id); if (n) n.remove(); }); }
     c.querySelectorAll('.sel').forEach(n => n.classList.remove('sel'));
     const st = document.createElementNS('http://www.w3.org/2000/svg', 'style'); st.textContent = '.region.sel{}'; c.insertBefore(st, c.firstChild);
     return '<?xml version="1.0" encoding="UTF-8"?>\n' + new XMLSerializer().serializeToString(c);

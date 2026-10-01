@@ -8,7 +8,7 @@ Open `index.html` in a browser (no build step, no dependencies, works offline; C
 | **Continent** | Hand-placed Runeterra (12 regions, 30 POIs, roads and sea routes) with procedural coastlines, terrain icons, optional hex overlay |
 | **Region** | Zoomed, higher-detail map of one region plus seeded hamlets, camps, ruins, shrines and caves, each with a generated hook |
 | **City** | Walled-city layout (gates, ring roads, districts, buildings, optional harbor) styled per culture |
-| **Battle** | 36×24 five-foot grid with biome terrain (river/bridge, forest, bog, cliffs, rubble, ice…) and terrain rules per square |
+| **Battle** | 36×24 five-foot grid with biome terrain (river/bridge, forest, bog, cliffs, rubble, ice…) and terrain rules per square. Includes an indoor **Zaun Laboratory**: partitioned rooms, doors, chem-vats, cages, consoles, vents and spills |
 
 ## Interactivity
 - Click a region / POI / district / square: encounter table with d6 roller, NPCs, quest hooks, random NPC/hook generators, session notes.
