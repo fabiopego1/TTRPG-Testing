@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Runeterra Atlas — Interactive TTRPG Map Generator</title>
+<title>Runeterra Atlas — Demacia maps to scale</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
@@ -11,58 +11,55 @@
 <body>
 <header class="top">
   <div class="brand"><svg viewBox="0 0 40 40" width="34" height="34" aria-hidden="true"><path d="M20 2L36 11V29L20 38L4 29V11Z" fill="none" stroke="#c8aa6e" stroke-width="2"/><path d="M20 9L30 15V25L20 31L10 25V15Z" fill="#0ac8b9" opacity=".25" stroke="#0ac8b9" stroke-width="1.5"/><path d="M20 14V26M14 20H26" stroke="#f0e6d2" stroke-width="2"/></svg>
-    <div><h1>RUNETERRA ATLAS</h1><small>Interactive campaign cartographer</small></div></div>
+    <div><h1>RUNETERRA ATLAS</h1><small>Gridless maps drawn to scale · Demacia</small></div></div>
   <nav class="tabs" id="scaleTabs" role="tablist">
-    <button data-scale="continent" class="on">Continent<kbd>1</kbd></button>
-    <button data-scale="region">Region<kbd>2</kbd></button>
-    <button data-scale="city">City<kbd>3</kbd></button>
-    <button data-scale="battle">Battle<kbd>4</kbd></button>
+    <button data-level="city" class="on">City<kbd>1</kbd></button>
+    <button data-level="site">Below city<kbd>2</kbd></button>
   </nav>
 </header>
 
 <div class="layout">
   <aside class="side" id="controls">
     <section>
-      <h3>Seed</h3>
-      <div class="row"><input id="seed" type="text" spellcheck="false" aria-label="Seed"><button id="rollSeed" title="Random seed" class="sq">⟳</button></div>
-      <p class="hint">Seed drives terrain scatter, generated POIs, city layouts and battle maps. Continent coastlines stay canon.</p>
-    </section>
-    <section>
-      <h3>Focus</h3>
-      <label class="fld" id="fldRegion">Region<select id="regionSel"></select></label>
-      <label class="fld" id="fldCity">City<select id="citySel"></select></label>
-      <label class="fld" id="fldBiome">Battle terrain<select id="biomeSel"></select></label>
+      <h3>Map</h3>
+      <label class="fld"><select id="mapSel"></select></label>
+      <label class="fld">Era<select id="eraSel"></select></label>
+      <div class="col"><button id="loreBtn" class="btn">Demacia primer</button><button id="scaleBtn" class="btn gold">Scale &amp; token guide</button></div>
     </section>
     <section>
       <h3>Style</h3>
-      <label class="fld">Theme<select id="themeSel"></select></label>
+      <label class="fld">Lighting<select id="themeSel"><option value="day">Day</option><option value="night">Night (lit by fire and moon)</option></select></label>
       <div class="checks">
         <label><input type="checkbox" id="tLabels" checked>Labels</label>
-        <label><input type="checkbox" id="tBorders" checked>Borders</label>
-        <label><input type="checkbox" id="tIcons" checked>Terrain</label>
-        <label><input type="checkbox" id="tRoads" checked>Routes</label>
-        <label><input type="checkbox" id="tHex">Hex grid</label>
-        <label><input type="checkbox" id="tGrid" checked>Square grid</label>
-        <label><input type="checkbox" id="tDeco" checked>Frame & compass</label>
+        <label><input type="checkbox" id="tNumbers" checked>Numbers</label>
+        <label><input type="checkbox" id="tDeco" checked>Frame &amp; scale bar</label>
       </div>
     </section>
     <section>
-      <h3>Pins</h3>
-      <div class="row"><select id="pinType" aria-label="Pin type"></select><button id="pinMode" class="btn">Place</button></div>
-      <p class="hint" id="pinHint">Toggle “Place”, then click the map to drop an NPC, quest hook or encounter.</p>
+      <h3>Tokens &amp; tools</h3>
+      <div class="row"><select id="tokType" aria-label="Token type"></select></div>
+      <label class="fld" style="margin-top:8px">Token size<select id="tokSize"></select></label>
+      <div class="col" style="margin-top:6px">
+        <button id="toolToken" class="btn">Place tokens</button>
+        <button id="toolPin" class="btn">Place note markers</button>
+        <button id="toolMeasure" class="btn">Ruler (measure feet)</button>
+      </div>
+      <p class="hint" id="toolHint">Tokens go anywhere (no grid) and can be dragged. A Medium creature — an average person — is 5 ft across.</p>
     </section>
     <section>
       <h3>Export</h3>
       <div class="col">
         <button id="exSvg" class="btn">Download SVG</button>
-        <button id="exPng" class="btn">Download PNG</button>
-        <button id="exVtt" class="btn gold" title="No labels frame/pins; battle maps export at 70 px per square">VTT-ready PNG</button>
+        <button id="exPng" class="btn">Download PNG (with labels)</button>
+        <button id="exVtt" class="btn gold" title="Just the art: no labels, frame, markers or tokens">VTT-ready PNG (art only)</button>
       </div>
+      <label class="fld" style="margin-top:8px">Resolution<select id="pxSel"></select></label>
+      <p class="hint" id="exInfo"></p>
     </section>
     <section>
       <h3>Campaign</h3>
       <div class="col">
-        <button id="saveJson" class="btn">Save pins & notes</button>
+        <button id="saveJson" class="btn">Save tokens &amp; notes</button>
         <button id="loadJson" class="btn">Load…</button>
         <button id="resetAll" class="btn ghost">Clear all</button>
         <input type="file" id="fileIn" accept="application/json" hidden>
@@ -80,8 +77,10 @@
   <aside class="panel" id="panel"></aside>
 </div>
 <script src="js/core.js"></script>
-<script src="js/data.js"></script>
-<script src="js/render.js"></script>
+<script src="js/lore.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/maps/crownguard.js"></script>
+<script src="js/maps/silvermere.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
