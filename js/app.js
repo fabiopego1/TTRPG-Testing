@@ -144,7 +144,7 @@
     const r = RT.regionById(p.region), isCity = p.type === 'city' || p.type === 'port';
     const rr = RT.rng(S.seed + '|poi|' + p.id), hookText = p.hook || RT.genHook(rr, r.culture);
     return `<div class="tag">${RT.esc(r.name)} · ${p.type}</div><h2>${RT.esc(p.name)}</h2>
-      <div class="actions">${isCity ? `<button class="btn gold" data-act="openCity" data-id="${p.id}">Open city map</button>` : ''}<button class="btn" data-act="selRegion" data-id="${p.region}">Region info</button></div>
+      <div class="actions">${isCity ? `<button class="btn gold" data-act="openCity" data-id="${p.id}">Open city map</button>` : ''}<button class="btn" data-act="openBattle" data-id="${p.id}">Open battle map</button><button class="btn" data-act="selRegion" data-id="${p.region}">Region info</button></div>
       <p class="lore">${p.gen ? `A ${p.type} the seed has conjured in ${RT.esc(r.name)}. ` : ''}${RT.esc(r.lore.split('. ')[0])}.</p>
       <h4>Hook</h4><div class="hook" id="poiHook">${RT.esc(hookText)}</div><div class="actions"><button class="btn" data-act="rerollHook" data-id="${p.id}">Re-roll hook</button></div>
       <h4>Encounters here</h4>${encTable(r.enc, 'enc:' + r.id)}
@@ -190,6 +190,7 @@
     else if (act === 'selPoi') { S.sel = { kind: 'poi', id }; draw(); }
     else if (act === 'openRegion') openRegion(id);
     else if (act === 'openCity') openCity(id);
+    else if (act === 'openBattle') { const p = poiById(id); S.biome = p.region === 'zaun' ? 'lab' : (RT.BIOME_OF_REGION[RT.regionById(p.region).biome] || 'plains'); $('biomeSel').value = S.biome; setScale('battle'); toast(RT.BIOMES[S.biome].name + ' battle map'); }
     else if (act === 'genNpc') { const r = RT.regionById(id), rr = RT.rng(Math.random() + ''); $('npcs').insertAdjacentHTML('beforeend', npcHtml([RT.genName(rr, r.culture, 'person'), RT.pick(rr, ['Wanderer', 'Courier', 'Mercenary', 'Scholar', 'Smuggler', 'Pilgrim']), RT.pick(rr, ['Seeks someone who does not want to be found.', 'Carries a letter they cannot read.', 'Is being followed.', 'Secretly serves a rival faction.', 'Owes the party a favor — they just don’t know it yet.'])])); }
     else if (act === 'genHook') { const r = RT.regionById(id); $('hooks').insertAdjacentHTML('beforeend', `<div class="hook">${RT.esc(RT.genHook(RT.rng(Math.random() + ''), r.culture))}</div>`); }
     else if (act === 'rerollHook') { const p = poiById(id), r = RT.regionById(p.region), t = RT.genHook(RT.rng(Math.random() + ''), r.culture); $('poiHook').textContent = t; if (p.gen) p.hook = t; }

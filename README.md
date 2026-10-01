@@ -31,3 +31,6 @@ Lore, tables and NPCs live in `js/data.js` — edit freely to match your campaig
 - **D3 / d3-delaunay** — good for Voronoi terrain, but a dependency-free SVG renderer was simpler for a fixed canon layout plus click interaction.
 
 Lore is paraphrased from the League of Legends universe for tabletop use; names and settings belong to Riot Games.
+
+## Hosting (GitHub Pages)
+`.github/workflows/pages.yml` publishes the static site on every push to `main`. One-time setup if the first run fails on "Pages not enabled": repo **Settings → Pages → Build and deployment → Source: GitHub Actions**, then re-run the workflow. The site lives at `https://<user>.github.io/<repo>/`.
