@@ -8,13 +8,13 @@ Two gridless, illustrated maps — one **city** and one **below-city** site — 
 | Level | Map | Size |
 |---|---|---|
 | I · City | **High Silvermere** — walls, river, Silvermere Falls, Knight's Rock with the Raptor Aerie, two main streets crossing at the market square, blocks of houses facing the streets with backyards, west/south gates, bridge, stables, shrine | 2,000 × 1,300 ft |
-| II · Below the city | **House Crownguard Mansion** — ground-floor plan (kitchen, servants' hall, library, study, great hall, dining hall, drawing room), terrace, forecourt, grounds and the rock face behind. The house and its library are from the lore; the plan is invented | 200 × 130 ft |
+| II · Below the city | **House Crownguard Mansion** — ground-floor plan (kitchen, servants' hall, library, study, great hall, dining hall, drawing room; the house is 84 × 52 ft), service yard, terrace, forecourt, grounds and the rock face behind. The house and its library are from the lore; the plan is invented | 200 × 130 ft |
 
 The mansion sits at its true position and size inside the city map (location 2 → "Open map").
 
 ## Scale
-- A token is the creature's **body footprint**: a person is **2.5 ft**; Tiny 1.25 · Large 5 · Huge 10 · Gargantuan 15. The same on the city and the site. The 5-ft D&D "square" is the space a creature controls, not its body.
-- Objects are sized against a person: doors 3–3.5 ft (double 6, entrance 7), interior walls 1.6 ft, streets 16–26 ft, houses 20–30 ft frontage × 32–38 ft deep.
+- A token is the creature's **body footprint**: a person is **1.5 ft** (18 in across the shoulders, about a chair's width); Tiny 0.75 · Large 3 · Huge 6 · Gargantuan 12. The same on the city and the site. The 5-ft D&D "square" is the space a creature controls, not its body.
+- Objects are sized against a person: chair 1.5 ft, dining table 3.2 ft wide with 2.2 ft per diner, doors 3 ft (double 5, entrance 6), interior walls 1.2 ft, streets 14–24 ft, houses 20–30 ft frontage × 32–38 ft deep.
 - No grid: tokens go anywhere and can be dragged; the **Ruler** measures feet.
 - Export resolution is "px per 5 ft" (site 50/70/100/140 — 70 = Roll20, 100 = Foundry; city 10/15/20/30). The info line shows the image size and how many pixels a 5-ft step and a person are.
 

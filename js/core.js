@@ -9,7 +9,7 @@ window.RT = window.RT || {};
     return '#' + a.map((v, i) => Math.round(v + (b[i] - v) * t).toString(16).padStart(2, '0')).join('');
   };
   RT.MAPS = {};
-  // Token diameter = the creature's body footprint in feet (not the 5-ft D&D "square" it controls).
-  // A person is about 2 ft across at the shoulders; the token is 2.5 ft so it reads clearly.
-  RT.CREATURES = [['Tiny', 1.25, 'about 1¼ ft — rat, raven'], ['Medium', 2.5, 'about 2½ ft — an average person, dwarf, halfling'], ['Large', 5, '5 ft — horse, silverwing raptor, ogre'], ['Huge', 10, '10 ft — giant, young dragon'], ['Gargantuan', 15, '15 ft — ancient dragon, kraken']];
+  // Token diameter = the creature's body footprint in feet. A person is ~18 in (1.5 ft) across the shoulders.
+  // The 5-ft D&D "square" is the space a creature controls, not its body.
+  RT.CREATURES = [['Tiny', .75, 'about 9 in — rat, raven'], ['Medium', 1.5, 'about 18 in across the shoulders — an average person, dwarf, halfling'], ['Large', 3, '3 ft — horse, silverwing raptor, ogre'], ['Huge', 6, '6 ft — giant, young dragon'], ['Gargantuan', 12, '12 ft — ancient dragon, kraken']];
 })(window.RT);
