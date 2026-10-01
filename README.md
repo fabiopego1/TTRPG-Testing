@@ -1,36 +1,25 @@
-# Runeterra Atlas — interactive TTRPG map generator
+# Runeterra Atlas — Demacia city & battle maps
 
-Open `index.html` in a browser (no build step, no dependencies, works offline; Cinzel font loads from Google Fonts if online).
+Live: https://fabiopego1.github.io/TTRPG-Testing/ · or open `index.html` locally (no build, no dependencies).
 
-## Scales
-| Scale | What you get |
-|---|---|
-| **Continent** | Hand-placed Runeterra (12 regions, 30 POIs, roads and sea routes) with procedural coastlines, terrain icons, optional hex overlay |
-| **Region** | Zoomed, higher-detail map of one region plus seeded hamlets, camps, ruins, shrines and caves, each with a generated hook |
-| **City** | Walled-city layout (gates, ring roads, districts, buildings, optional harbor) styled per culture |
-| **Battle** | 36×24 five-foot grid with biome terrain (river/bridge, forest, bog, cliffs, rubble, ice…) and terrain rules per square. Includes an indoor **Zaun Laboratory**: partitioned rooms, doors, chem-vats, cages, consoles, vents and spills |
+Focused on **Demacia** first (other regions to follow). Two modes: **City** and **Battle**.
 
-## Interactivity
-- Click a region / POI / district / square: encounter table with d6 roller, NPCs, quest hooks, random NPC/hook generators, session notes.
-- Double-click a region or city to drill down. Wheel = zoom, drag = pan, `1`–`4` switch scale, `Esc` deselects.
-- **Pins** (NPC / quest / encounter / note; hero / foe tokens on battle maps) with labels and notes; `Delete` removes the selected pin.
-- Pins and notes persist in `localStorage`; **Save/Load** exports them as JSON.
+## City maps (6)
+The Great City of Demacia · High Silvermere · Dawnhold · Terbisia · Fossbarrow · Meltridge.
+Each is template-driven from the lore: walls, gates, districts (noble, slum, market, military, harbor…), roads, rivers/sea, hills and landmark buildings. Click a numbered landmark or a district for description, NPC, hook and street encounters. Landmarks are tagged **canon** (from the wiki) or **invented** (table-ready additions). The **Era** switch swaps between *Mageseekers’ Reign* and *The Turmoil* (Sylas’ rebellion), changing rumors, encounters and some landmark text.
 
-## Export
-- **SVG** and **PNG** of the current view.
-- **VTT-ready PNG**: strips frame, pins and grid; battle maps export at 70 px per square.
+## Battle maps (7, 36×24 grid of 5 ft squares)
+Cloudwoods Road Ambush · Custodian Wall at Greenfang Pass · Great City Plaza Skirmish · Mageseekers Complex (petricite cells) · Dawnhold Harbor Raid · Noble Manor Gala · Silverwing Aerie Cliffs.
+Every square has tabletop rules (cover, difficult terrain, DCs). Each scenario has objectives, an enemy/encounter d6 table and a complications d6 table. The seed re-rolls terrain.
 
-## Customisation
-Seed (re-rolls terrain scatter, generated POIs, cities, battle maps; continent coastlines stay canon), themes (Parchment / Hextech / Political), and toggles for labels, borders, terrain, routes, hex grid, square grid and frame.
-Lore, tables and NPCs live in `js/data.js` — edit freely to match your campaign.
+## Tools
+Pins (NPC / quest / encounter / note; hero & foe tokens on battle maps), session notes, day/moonlit lighting, SVG / PNG export, **VTT-ready PNG** (no grid, labels or pins; battle maps at 70 px per square), save/load campaign JSON. Pins/notes persist in your browser.
 
-## Why a custom engine (research summary)
-- **Fantasy Map Generator (Azgaar)** — browser-only and DOM-coupled; no stable headless API (a headless port is still in progress), and it generates random worlds rather than a fixed Runeterra.
-- **Wargame Cartographer** — a Claude Code plugin built around real-world terrain data; not suited to a fictional continent.
-- **RPG Map Creator (Smithery)** — no public API/extension point found.
-- **D3 / d3-delaunay** — good for Voronoi terrain, but a dependency-free SVG renderer was simpler for a fixed canon layout plus click interaction.
+## Lore sources
+Official League of Legends Universe wiki: Demacia, The Great City of Demacia, High Silvermere, Dawnhold, Custodian Wall, Greenfang Mountains (links in the in-app “Demacia primer”). Lore is paraphrased; Demacia and League of Legends belong to Riot Games. All DCs and stat suggestions are table suggestions — adjust to your system. Edit `js/demacia.js` to change cities, NPCs, hooks and scenarios.
 
-Lore is paraphrased from the League of Legends universe for tabletop use; names and settings belong to Riot Games.
+## Hosting
+`.github/workflows/pages.yml` deploys the static site to GitHub Pages on every push to `main` (Settings → Pages → Source: GitHub Actions).
 
-## Hosting (GitHub Pages)
-`.github/workflows/pages.yml` publishes the static site on every push to `main`. One-time setup if the first run fails on "Pages not enabled": repo **Settings → Pages → Build and deployment → Source: GitHub Actions**, then re-run the workflow. The site lives at `https://<user>.github.io/<repo>/`.
+## Layout
+`js/demacia.js` lore & scenarios · `js/city.js` city renderer · `js/battle.js` tile engine & map generators · `js/app.js` UI · `js/render.js`/`js/data.js` earlier continent/region engine (not shown in the UI; kept for future regions).
